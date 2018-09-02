@@ -11,7 +11,10 @@
     "dva": "^2.4.0",
     "dva-loading": "^2.0.5",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.2.0",
+    "react-router-scroll": "^0.4.4",
+    "react-router-scroll-4": "^1.0.0-beta.2",
+    "scroll-behavior": "^0.9.9"
   },
   "devDependencies": {
     "babel-plugin-dva-hmr": "^0.3.2",
@@ -24,6 +27,6 @@
     "eslint-plugin-react": "^7.1.0",
     "husky": "^0.12.0",
     "redbox-react": "^1.4.3",
-    "roadhog": "^2.0.0"
+    "roadhog": "^2.4.5"
   }
 }
