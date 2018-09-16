@@ -12,7 +12,6 @@ function RouterConfig() {
       <ScrollContext>
         <Switch>
           <Route path="/applicationPage" component={ApplicationPage} />
-          <Route path="/haveDeal" component={HaveDeal} />
           <Route path="/" component={Main} />
         </Switch>
       </ScrollContext>

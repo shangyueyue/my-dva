@@ -1,25 +1,83 @@
-import React from 'react';
-// import { InputItem } from 'antd-mobile';
-import AlertModal from '../../components/feedback/AlertModal'
+
+import  React from 'react';
+import { connect } from 'dva'
+import { ListView, Flex } from 'antd-mobile';
 
 class HaveDeal extends React.Component {
-  handleClick=(e)=>{
-    console.log(e.target.dataset.age)
+  constructor(props) {
+    super(props);
+    const dataSource = new ListView.DataSource({
+      rowHasChanged: (row1, row2) => row1 !== row2,
+    })
+    this.state = {
+      dataSource: dataSource.cloneWithRows({}),
+    }
+    this.isLoading=false;
   }
-  handleShowModal=()=>{
-    console.log(111)
-    const message="ddfjsnnbb"
-    AlertModal({message})
+
+  componentDidMount() {
+    this.props.dispatch({
+      type:'haveDeal/fetchList',
+      payload:{currentPage:1}
+    })
+    this.isLoading=true;
   }
-  render() {
-    const msg='<a data-age="24">handleClick</a>'
+
+  // If you use redux, the data maybe at props, you need use `componentWillReceiveProps`
+  componentWillReceiveProps(nextProps) {
+    const { haveDeal: { listCurrentDatas }} = nextProps ;
+    if (this.isLoading) {
+      // console.log("nextProps",nextProps,this.props.haveDeal.listCurrentDatas)
+      this.isLoading=false;
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(listCurrentDatas),
+      });
+    }
+  }
+
+  onEndReached = (event) => {
+    const {currentPage,totalPages}= this.props.haveDeal;
+    if(currentPage*5 >= totalPages) return;
+    if(!this.state.isLoading){
+      const {currentPage}= this.props.haveDeal;
+      this.isLoading=true;
+      this.props.dispatch({
+        type:'haveDeal/getList',
+        payload:{nextPage: currentPage+1}
+      })
+    }
+  }
+
+  _renderRow =(dataRow,rowId)=>{
+    console.log("rowId",rowId)
     return (
-      <div>
-        <div onClick={this.handleShowModal}>shnsggnng</div>
-        <div onClick={ this.handleClick} dangerouslySetInnerHTML={{__html: msg }}></div>
-      </div>
+      <Flex style={{height: 200}}>
+        <p><img src={dataRow.img} alt=""/></p>
+        {dataRow.des}
+      </Flex>
+    )
+  }
+
+  render() {
+  
+    return (
+      <ListView
+        style={{padding:'50px 0'}}
+        dataSource={this.state.dataSource}
+        renderHeader={() => <span>header</span>}
+        renderFooter={() => (<div style={{ padding: 30, textAlign: 'center' }}>
+          {this.state.isLoading ? 'Loading...' : 'Loaded'}
+        </div>)}
+        renderRow={this._renderRow}
+        onEndReached={this.onEndReached}
+        onEndReachedThreshold={10}
+        pageSize={4}
+        useBodyScroll
+      />
     );
   }
 }
 
-export default HaveDeal;
+
+
+export default connect(({haveDeal})=>({haveDeal}))(HaveDeal);
